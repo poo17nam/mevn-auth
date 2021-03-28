@@ -2,6 +2,8 @@ import express from 'express'
 
 import Mongoose from 'mongoose'
 
+import BodyParser from 'body-parser'
+
 import config from '@config'
 
 import path from 'path'
@@ -20,6 +22,8 @@ Mongoose.connect(config.databaseUrl, { useNewUrlParser: true })
 
 const app = express()
 
+app.use(BodyParser.json())
+
 const compiler = Webpack(webpackConfig)
 
 app.use(WebpackDevMiddleware(compiler, {
@@ -31,6 +35,8 @@ app.use(WebpackHotMiddleware(compiler, {
 }))
 
 app.use(v1Router)
+
+app.use(express.static(path.resolve(__dirname, 'public')))
 
 app.get('*', (req, res) => {
     res.sendFile(path.resolve(__dirname, 'public/index.html'))
